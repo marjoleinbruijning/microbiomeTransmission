@@ -1,6 +1,7 @@
-# Vertical microbiome transmission
+# Simulate selection on vertical microbiome transmission
 
-R-code to perform analysis as presented in the manuscript: 'When the microbiome defines the host phenotype: selection on transmission in varying environments.'
+R-code to perform analysis as presented in the manuscript: **When the microbiome defines the host phenotype: selection on transmission in varying environments.** (Bruijning *et al.*, in prep).
+
 
 See [here](https://marjoleinbruijning.shinyapps.io/simulhostmicrobiome/) for an interactive tool.
 
