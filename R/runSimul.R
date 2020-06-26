@@ -37,24 +37,8 @@ if('varRes' %in% colnames(scenarios)) {
 } else {varE <- 0}
 
 # draw host and microbe genetic values
-if('gshape' %in% colnames(scenarios)) {
-  gshape <- scenarios$gshape[r]
-} else {gshape <- 'normal'}
-
-if (gshape == 'uniform') {
-  ranges <- sqrt(3*varGm) # calculate ranges based on variance
-  Gmicro <- runif(smicrobe,-ranges,ranges)
-} else if (gshape == 'bimodal') {
-  w <- rbinom(smicrobe, 1, .5)
-  new_mean <- 0.09
-  new_var <- varGm - new_mean^2
-  Gmicro <- w*rnorm(smicrobe,-new_mean,sqrt(new_var)) +
-           (1-w)*rnorm(smicrobe,new_mean,sqrt(new_var))
-} else if (gshape == 'normal') {
-  Gmicro <- rnorm(smicrobe,0,sqrt(varGm))
-}
-Gmicro <- Gmicro - mean(Gmicro)
-
+Gmicro <- rnorm(smicrobe,0,sqrt(varGm))
+Gmicro <- Gmicro - mean(Gmicro) # mean at exactly 0
 Ghost <- rnorm(nhost,0,sqrt(varGh))
 
 # transmission fidelity
@@ -90,7 +74,6 @@ if('correctVar' %in% colnames(scenarios)) {
 } else {correctVar <- FALSE}
 
 ## Simulate environments
-#allEnv <- rnorm(timeBetween,0,sqrt(scenarios$varEnv[r]))
 # temporal autocorrelation
 if('corrEnv' %in% colnames(scenarios)) {
   corrEnv <- scenarios$corrEnv[r]
@@ -98,8 +81,7 @@ if('corrEnv' %in% colnames(scenarios)) {
 
 if('setseedEnv' %in% colnames(scenarios)) {
   set.seed(scenarios$setseedEnv[r])
-} else {set.seed(runif(1))}
-
+} else {set.seed(as.numeric(Sys.time()))}
 allEnv <- arima.sim(list(order=c(1,0,0), ar=corrEnv), n=timeBetween)
 allEnv <- sqrt(scenarios$varEnv[r]) * ((allEnv-mean(allEnv)) / (sd(allEnv)))
 
@@ -111,12 +93,11 @@ microb[,1,1,] <- sample(1:smicrobe,size=nmicrobe*nhost,
                          prob=rep(1,smicrobe),
                          replace=TRUE)
 
-
 # start with every host
 host <- array(NA,dim=c(nhost,timeBetween))
 host[,1] <- 1:nhost
 pheno <- array(NA,dim=c(nhost,timeBetween))
-fitness <- varpheno <- divmicro <- Ne <- h2 <- rep(NA,timeBetween)
+fitness <- varpheno <- rep(NA,timeBetween)
 
 for (j in 1:(timeBetween-1)) {
   for (h in 1:nhost) { # for all hosts
@@ -156,14 +137,9 @@ for (j in 1:(timeBetween-1)) {
   microb[,1,j+1,] <- simm$microbEnd
   host[,j+1] <- simm$hostEnd
 
-  if (j > 1) {h2[j] <- coef(lm(simm$phenotypes ~ tmp))[2]}
-  tmp <- simm$phenotypes[simm$repr]
-
   fitness[j] <- simm$fitness # fitness for this timestep
   pheno[,j] <- simm$phenotypes # phenotypes
   varpheno[j] <- var(simm$phenotypes) # variance in phenotypes for this timestep
-  divmicro[j] <- mean(apply(simm$microbEnd,2,function(x) length(table(x))))
-  Ne[j] <- simm$Ne
 
   cat('\r \t', round((j/(timeBetween-1))*100),'%','\t of round',r,'/',nrow(scenarios))
 }

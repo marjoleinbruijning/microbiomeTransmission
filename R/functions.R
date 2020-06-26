@@ -118,4 +118,3 @@ runBetween <- function (hostStart,
 calcfitness <- function(x,opt=1,w=1) {
   exp(-(x-opt)^2/(2*w))
 }
-
