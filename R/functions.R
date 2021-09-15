@@ -54,9 +54,7 @@ runBetween <- function (hostStart,
                         varE,
                         env,
                         selcoef,
-                        sex,
-                        correctP,
-                        correctVar) {
+                        correctP) {
 
   # store output
   hostEnd <- rep(NA,nhost)
@@ -64,34 +62,21 @@ runBetween <- function (hostStart,
   P <- rep(NA,nhost)
 
   ## Obtain host phenotypes
-  if (!sex) {
-    for (h in 1:nhost) {
-      P[h] <- Ghost[hostStart[h]] +
-              sum(Gmicro[microbStart[,h]]) +
-              rnorm(1,0,sqrt(varE))
-    }
-  } else if (sex) {
-    for (h in 1:nhost) {
-      P[h] <- 0.5*Ghost[hostStart[h]] + 0.5*rnorm(1,0,sqrt(1)) +
-                    sum(Gmicro[microbStart[,h]]) +
-                    rnorm(1,0,sqrt(varE))
-    }
+  for (h in 1:nhost) {
+    P[h] <- Ghost[hostStart[h]] +
+            sum(Gmicro[microbStart[,h]]) +
+            rnorm(1,0,sqrt(varE))
   }
 
-   ## set mean phenotype to 0
+   ## set mean phenotype to 0?
    if (correctP) {P <- P - mean(P)}
-
-   ## set phenotypic variance to 1
-   if (correctVar) {P <- rnorm(nhost,mean(P),1)}
 
   # Phenotypic selection based on environment
   psurv <- calcfitness(x=P,opt=env,w=selcoef)
-  fitness <- mean(psurv)
+  fitness <- mean(psurv) # average host fitness for this timestep
 
   # which hosts to keep, keep total host population size equal
   inc <- sample(1:nhost,nhost,replace=TRUE,prob=psurv)
-
-  Ne <- length(unique(inc))
 
   for (h in 1:length(inc)) {
 
@@ -109,7 +94,7 @@ runBetween <- function (hostStart,
   }
 
   return(list(microbEnd=microbEnd,hostEnd=hostEnd,fitness=fitness,
-              phenotypes=P,Ne=Ne,
+              phenotypes=P,
               repr=inc))
 }
 

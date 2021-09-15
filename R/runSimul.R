@@ -1,7 +1,7 @@
 
 ####################################################################################
-########## Code for manuscript: When the microbiome defines the host ###############
-######### phenotype: selection on transmission in varying environments #############
+########## Code for manuscript: Natural selection for imprecise vertical 
+###################### transmission in host-microbiota systems  ####################
 ####################################################################################
 ############################## Marjolein Bruijning #################################
 ####################################################################################
@@ -21,7 +21,7 @@ if('nhost' %in% colnames(scenarios)) {
 timeWithin <- scenarios$timeWithin[r] # timesteps within host generation
 nmicrobe <- 100 # Number of microbes within host
 deathrate <- 1 # rate at which microbes die (when 1, corresponds to 1 generation)
-if('imm' %in% colnames(scenarios)) { # new immigrant probabilitiy ('horizontal transmission')
+if('imm' %in% colnames(scenarios)) { # new immigrant probabilitiy ('environmental transmission')
   migr <- scenarios$imm[r]
 } else {migr <- 0}
 smicrobe <- 1000
@@ -43,7 +43,7 @@ Ghost <- rnorm(nhost,0,sqrt(varGh))
 
 # transmission fidelity
 # same within each host
-trans <- matrix(runif(nhost,scenarios$minTrans[r],scenarios$maxTrans[r]),
+trans <- matrix(runif(nhost,scenarios$tau[r],scenarios$tau[r]),
                 nrow=nhost,ncol=smicrobe)
 
 # colonization prob
@@ -58,20 +58,10 @@ if('vgrowth' %in% colnames(scenarios)) {
 } else {tmp <- 0}
 growth <- rbeta(smicrobe,1,tmp) ; growth <- growth/sum(growth)
 
-# sexual reproduction
-if('sex' %in% colnames(scenarios)) {
-  sex <- scenarios$sex[r]
-} else {sex <- FALSE}
-
 # set mean phenotype to 0 every generation
 if('correctP' %in% colnames(scenarios)) {
   correctP <- scenarios$correctP[r]
 } else {correctP <- FALSE}
-
-# set phenotypic variance to 0 every generation
-if('correctVar' %in% colnames(scenarios)) {
-  correctVar <- scenarios$correctVar[r]
-} else {correctVar <- FALSE}
 
 ## Simulate environments
 # temporal autocorrelation
@@ -96,8 +86,8 @@ microb[,1,1,] <- sample(1:smicrobe,size=nmicrobe*nhost,
 # start with every host
 host <- array(NA,dim=c(nhost,timeBetween))
 host[,1] <- 1:nhost
-pheno <- array(NA,dim=c(nhost,timeBetween))
-fitness <- varpheno <- rep(NA,timeBetween)
+pheno <- array(NA,dim=c(nhost,timeBetween-1))
+fitness <- varpheno <- rep(NA,timeBetween-1)
 
 for (j in 1:(timeBetween-1)) {
   for (h in 1:nhost) { # for all hosts
@@ -130,9 +120,7 @@ for (j in 1:(timeBetween-1)) {
                     smicrobe=smicrobe,
                     varE=varE,
                     selcoef=selcoef,
-                    sex=sex,
-                    correctP=correctP,
-                    correctVar=correctVar)
+                    correctP=correctP)
 
   microb[,1,j+1,] <- simm$microbEnd
   host[,j+1] <- simm$hostEnd
