@@ -1,11 +1,11 @@
 
 ####################################################################################
-########## Code for manuscript: Natural selection for imprecise vertical 
+########## Code for manuscript: Natural selection for imprecise vertical
 ###################### transmission in host-microbiota systems  ####################
 ####################################################################################
 ############################## Marjolein Bruijning #################################
 ####################################################################################
-################################### 2020-05-27 #####################################
+################################### 2021-09-15 #####################################
 ####################################################################################
 
 ###################### Code to run one specific simulation #########################
@@ -17,7 +17,7 @@ if('nhost' %in% colnames(scenarios)) {
   nhost <- scenarios$nhost[r]
 } else {nhost <- 500} # Number of different hosts
 
-## microbes
+# microbes
 timeWithin <- scenarios$timeWithin[r] # timesteps within host generation
 nmicrobe <- 100 # Number of microbes within host
 deathrate <- 1 # rate at which microbes die (when 1, corresponds to 1 generation)
@@ -31,10 +31,10 @@ selcoef <- scenarios$selcoef[r]
 if('varGh' %in% colnames(scenarios)) {
   varGh <- scenarios$varGh[r]
 } else {varGh <- 0}
-varGm <- scenarios$varGm[r]
 if('varRes' %in% colnames(scenarios)) {
   varE <- scenarios$varRes[r]
 } else {varE <- 0}
+varGm <- scenarios$varGm[r]
 
 # draw host and microbe genetic values
 Gmicro <- rnorm(smicrobe,0,sqrt(varGm))
@@ -43,7 +43,7 @@ Ghost <- rnorm(nhost,0,sqrt(varGh))
 
 # transmission fidelity
 # same within each host
-trans <- matrix(runif(nhost,scenarios$tau[r],scenarios$tau[r]),
+trans <- matrix(scenarios$tau[r],
                 nrow=nhost,ncol=smicrobe)
 
 # colonization prob
@@ -78,7 +78,7 @@ allEnv <- sqrt(scenarios$varEnv[r]) * ((allEnv-mean(allEnv)) / (sd(allEnv)))
 
 ## Create variables to store output
 microb <- array(NA,dim=c(nmicrobe,timeWithin,timeBetween,nhost))
-# random microbial compositions
+# random initial microbial compositions
 microb[,1,1,] <- sample(1:smicrobe,size=nmicrobe*nhost,
                          prob=rep(1,smicrobe),
                          replace=TRUE)
@@ -90,6 +90,7 @@ pheno <- array(NA,dim=c(nhost,timeBetween-1))
 fitness <- varpheno <- rep(NA,timeBetween-1)
 
 for (j in 1:(timeBetween-1)) {
+
   for (h in 1:nhost) { # for all hosts
     # dynamics within host
     if (timeWithin > 1) {
@@ -103,7 +104,6 @@ for (j in 1:(timeBetween-1)) {
                                       migr=migr)
       }
     }
-
   }
 
   # dynamics between host generations
