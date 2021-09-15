@@ -1,7 +1,7 @@
 
 ####################################################################################
-########## Code for manuscript: When the microbiome defines the host ###############
-######### phenotype: selection on transmission in varying environments #############
+########## Code for manuscript: Natural selection for imprecise vertical 
+###################### transmission in host-microbiota systems  ####################
 ####################################################################################
 ############################## Marjolein Bruijning #################################
 ####################################################################################
