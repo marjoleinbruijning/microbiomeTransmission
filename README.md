@@ -26,7 +26,7 @@ scenarios <- expand.grid(varGm=c(0.01),
                          varEnv=c(0,2),
                          timeWithin=1,
                          selcoef=1,
-                         nhost=500)
+                         nhost=50)
 reps <- 10 # number of replicates
 scenarios <- scenarios[rep(seq_len(nrow(scenarios)),reps),]
 scenarios$rep <- rep(1:reps,each=nrow(scenarios)/reps)
