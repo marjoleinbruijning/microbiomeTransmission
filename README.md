@@ -1,6 +1,6 @@
 # Simulate selection on vertical microbiome transmission
 
-R-code to perform analysis as presented in the manuscript: **When the microbiome defines the host phenotype: selection on transmission in varying environments.** (Bruijning *et al.*, in prep).
+R-code to perform analysis as presented in the manuscript: **Natural selection for imprecise vertical transmission in host-microbiota systems** (Bruijning *et al.*, in prep).
 
 
 See [here](https://marjoleinbruijning.shinyapps.io/simulhostmicrobiome/) for an interactive tool.
@@ -28,7 +28,7 @@ scenarios <- expand.grid(varGm=c(0.01),
                          varEnv=c(0,2),
                          timeWithin=1,
                          selcoef=1,
-                         nhost=100)
+                         nhost=500)
 scenarios$maxTrans <- scenarios$minTrans # transmission same for all hosts and microbes
 reps <- 10 # number of replicates
 scenarios <- scenarios[rep(seq_len(nrow(scenarios)),reps),]
@@ -36,7 +36,7 @@ scenarios$rep <- rep(1:reps,each=nrow(scenarios)/reps)
 scenarios$setseedEnv <- scenarios$rep  # each replicate different seed
 ```
 
-Note that in file runSimul.R the default settings of some other variables are given. These can also be added to the data frame if they need to be altered.
+Note that in file runSimul.R the default settings of some other variables are given. These can also be added to the data frame (scenarios) if they need to be altered.
 
 Finally, run the simulation. Code below illustrates how this could be done using a for loop, or in parallel.
 
