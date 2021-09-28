@@ -1,6 +1,6 @@
 # Simulate selection on vertical microbiome transmission
 
-R-code to perform analysis as presented in the manuscript: **Natural selection for imprecise vertical transmission in host-microbiota systems** (Bruijning *et al.*, in prep).
+R-code to perform analysis as presented in the manuscript: **Natural selection for imprecise vertical transmission in host-microbiota systems** (Bruijning *et al.*).
 
 
 See [here](https://marjoleinbruijning.shinyapps.io/simulhostmicrobiome/) for an interactive tool.
@@ -33,7 +33,7 @@ scenarios$rep <- rep(1:reps,each=nrow(scenarios)/reps)
 scenarios$setseedEnv <- scenarios$rep  # each replicate different seed
 ```
 
-Note that in file runSimul.R the default settings of some other variables are given. These can also be added to the data frame (scenarios) if they need to be altered.
+Note that in file R/runSimul.R the default settings of some other variables are given. These can also be added to the data frame 'scenarios' if they need to be modified.
 
 Finally, run the simulation. Code below illustrates how this could be done using a for loop.
 
@@ -42,7 +42,7 @@ Finally, run the simulation. Code below illustrates how this could be done using
 out <- matrix(NA,nrow=nrow(scenarios),ncol=3)
 colnames(out) <- c('meanfit','varpheno','phenodev')
 
-exl <- 1:500 # remove first 100 timesteps
+exl <- 1:500 # remove first 500 timesteps
 
 for(r in 1:nrow(scenarios)) {
   source('R/runSimul.R')
